@@ -1,0 +1,35 @@
+header {
+    border: thin solid black;
+    height: 100px;
+    width: 100%;
+}
+body{
+    background-color: #50828a;
+}
+li {
+    font-family: Arial, Helvetica, SansSerif;
+    color: #fb9e55;
+    font-size: medium;
+    padding: 50px;
+}
+a{
+color: #fdeed2;
+}
+h4{
+    color: #fb9e55;
+}
+div.sidebar {
+    margin: 0;
+    padding: 0;
+    width: 25%;
+    background-color: #263938;
+    border: thin solid black;
+    position: fixed;
+    height: 100%;
+    overflow: auto;
+    display: none;
+}
+div.content {
+    margin-left: 10px;
+
+}

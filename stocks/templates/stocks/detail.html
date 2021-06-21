@@ -1,0 +1,84 @@
+<html>
+<head>
+    {% load static %}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="{% static 'stocks/jquery-3.5.1.js' %}"></script>
+    <script type="text/javascript">
+        {% block javascript %}
+            $(document).ready(function () {
+                const csrf = $("input[name='csrfmiddlewaretoken']").val();
+               
+                function MMDDYYYY(date) {
+                    return ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + date.getFullYear()
+                } // function allows date objects to be converted to a format google news can handle
+
+                let storedData = [MMDDYYYY(new Date('{{ currentDate | safe }}'))];
+                console.log(storedData);
+
+                google.charts.load('current', {'packages': ['corechart']});
+                google.charts.setOnLoadCallback(drawChart);
+
+                function drawChart() {
+                    var data = new google.visualization.DataTable();
+                    data.addColumn('date', 'TimeStamp');
+                    data.addColumn('number', 'Value');
+                    {% for price, date in stock_information %}
+                        data.addRow([new Date('{{ date|safe }}'), {{ price|safe }}]);
+                    {% endfor %}
+
+                    var options = {
+                        title: '{{ title }} stock over time',
+                        hAxis: {title: 'Year', titleTextStyle: {color: '#333'}},
+                        vAxis: {minValue: 0}
+                    };
+
+                    function postData(event) { // Users ajax to get the data and add it to the unordered list for the news for the date
+                        console.log("postData function is running"); // check when function is being called
+                        $.ajax({
+                            url: '',
+                            type: 'POST',
+                            data: {
+                                dateOfClick: MMDDYYYY(storedData[0]),
+                                csrfmiddlewaretoken: csrf
+                            },
+                            success: function (response) {
+                                if (response.newsList[0] !== '' && response.newsList[0] !== undefined && response.newsList[0] !== null){
+                                    $("#news").append('<li>' + response.newsList[0] + '</li>')
+                                }
+                                if (response.newsList[0] === undefined){
+                                    $("#news").append('<li> No news from this date! </li>')
+                                }
+                            }
+                        })
+
+                    }
+
+                    var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+
+                    function selectHandler() { // Gets the selected date from the graph of the stock
+                        var selectedItem = chart.getSelection()[0];
+                        if (selectedItem) {
+                            var value = data.getValue(selectedItem.row, 0);
+                            storedData[0] = value;
+                            postData();
+                        }
+                    }
+
+                    google.visualization.events.addListener(chart, 'select', selectHandler)
+                    chart.draw(data, options);
+                }
+            })
+            </script>
+        {% endblock %}
+</head>
+<div>
+    <div id="chart_div" style="width: 50%; height: 500px;"></div>
+    <div id="content" style='width: 50%;'></div>
+</div>
+<body>
+{% csrf_token %}
+
+<ul id='news'>
+</ul>
+</body>
+</html>

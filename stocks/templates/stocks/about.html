@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Tech stock Timeline</title>
+
+<style>
+
+body {background-color: #2460A7FF}
+h1   {color: blue;}
+p    {color: red;}
+
+</style>
+
+</head>
+
+<body>
+	<div id="title" style="color: #FFFFFF; text-align:center; font-size: 60px"> Tech Stock Timeline
+  
+  <table>
+    <ul class = "main_menu">
+    <li><a href = "stocks/" style="font-size: 30px;"> See Current List of Stocks</a></li>
+    <li><a href = "stocks/new" style="font-size: 30px;"> Add a new Stock</a></li>
+    </ul>
+  </table>
+ 
+  </div>
+</body>
+{% load static %}
+<link rel="stylesheet" href={% static "stocks/about.css" %}>
+
+</html>
